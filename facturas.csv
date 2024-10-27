@@ -1,0 +1,12 @@
+name,partner_id,invoice_date,invoice_line_ids/account_id,invoice_line_ids/quantity,invoice_line_ids/price_unit,invoice_line_ids/tax_ids/id,invoice_line_ids/name
+1,43147111P,2024-07-10,"700000 Ventas de mercaderías en España",1,5.96,account.1_account_tax_template_s_iva0b,"Productos facturados al 0.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,12.2,account.1_account_tax_template_s_iva4b,"Productos facturados al 4.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,116.8,account.1_account_tax_template_s_iva10b,"Productos facturados al 10.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,33.56,account.1_account_tax_template_s_iva21b,"Productos facturados al 21.00% de IVA"
+2,47328297R,2024-07-24,"700000 Ventas de mercaderías en España",1,71.91,account.1_account_tax_template_s_iva0b,"Productos facturados al 0.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,133.69,account.1_account_tax_template_s_iva10b,"Productos facturados al 10.00% de IVA"
+3,47328297R,2024-09-04,"700000 Ventas de mercaderías en España",1,60.13,account.1_account_tax_template_s_iva0b,"Productos facturados al 0.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,153.47,account.1_account_tax_template_s_iva10b,"Productos facturados al 10.00% de IVA"
+4,47720834C,2024-09-25,"700000 Ventas de mercaderías en España",1,58.16,account.1_account_tax_template_s_iva0b,"Productos facturados al 0.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,106.82,account.1_account_tax_template_s_iva10b,"Productos facturados al 10.00% de IVA"
+,,,"700000 Ventas de mercaderías en España",1,2.91,account.1_account_tax_template_s_iva21b,"Productos facturados al 21.00% de IVA"
