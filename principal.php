@@ -89,6 +89,31 @@ IVA z
 ...
 IVA 21
 Sense IVA
+
+array(
+    "cart_id" => 123,
+    "soci" => "S1",  // Nom modificat de "Soci" a "S1"
+    "member" => "Joan Doe",
+    "nif" => "A12345678",
+    "date_for_shop" => "2023-01-01",
+    "con_iva" => array(
+        "4" => 104.00,  // Total amb un IVA del 4%
+        "10" => 110.00, // Total amb un IVA del 10%
+        "21" => 121.00, // Total amb un IVA del 21%
+    ),
+    "base_iva" => array(
+        "4" => 100.00,  // Import base per al 4% d'IVA
+        "10" => 100.00, // Import base per al 10% d'IVA
+        "21" => 100.00, // Import base per al 21% d'IVA
+    ),
+    "iva" => array(
+        "4" => 4.00,    // Import d'IVA per al 4%
+        "10" => 10.00,  // Import d'IVA per al 10%
+        "21" => 21.00,  // Import d'IVA per al 21%
+    ),
+    "total" => 335.00 // Suma dels valors de con_iva: 104.00 + 110.00 + 121.00
+);
+
 */
 function get_comanda_resumida($cart_id)
 {
@@ -150,7 +175,7 @@ function get_comanda_resumida($cart_id)
         }
     }
 
-    // Calcul del total
+    // Càlcul del total
     //$result['total'] = ['0%'] + $result['con_iva']['4%'] + $result['con_iva']['5%'] + $result['con_iva']['10%'] + $result['con_iva']['21%'];
     $result['total'] = 0;
     foreach ($iva_types as $iva_type) {
@@ -254,7 +279,7 @@ function findSociIndex($array, $soci) {
     }
     return -1;
 }
-function agrupar_factures_per_soci($factures)
+function agrupar_comandes_per_soci($factures)
 {
     $factures_agrupades = array();
    /* $factura_agrupada = [
@@ -435,9 +460,9 @@ if (!isset($_SESSION)) {
 */
 
 // Comprovació que només els següents roles tenen accés a facturacií:
-// Admin
-// Caixa:
-// Comissió cobisum:
+// Admin: 'Hacker Commission'
+// Caixa: 'Checkout'
+// Comissió consum: 'Consumer Commission'
     try{
         $role = get_current_role();
     }catch (Exception $ex){
@@ -453,7 +478,7 @@ if (!$isAdmin) {
 }
 
 
-// Tot correcte. Es fa un GET al apàgina principal
+// Tot correcte. Es fa un GET a la pàgina principal
 
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
@@ -480,18 +505,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         switch (strtolower($_POST['accio'])) {
             case 'facturar':
                 $total_totes_comandes=0;
+                $comandes = array();
+
+
                 foreach ($_POST as $cart_id => $value) {
                     if (is_int($cart_id)) {
                         $comanda = get_comanda_resumida($cart_id);
-                        array_push($factures, $comanda); // Append $comanda to $factures
+                        array_push($comandes, $comanda); // Append $comanda to $factures
                         $total_totes_comandes += $comanda['total'];
                     }
                 }
-                usort($factures, 'ordre_numeric_de_soci');
+                usort($comandes, 'ordre_numeric_de_soci');
 
-                $factures_agrupades = agrupar_factures_per_soci($factures);
+                $comandes_agrupades = agrupar_comandes_per_soci($comandes);
+
 
                 require('template_facturacio_resultats.php');
+                renderComandesTable($comandes, $iva_types, $total_totes_comandes);
+                renderComandesAgrupadesTable($comandes_agrupades, $iva_types, $total_totes_comandes);
                 break;
 
             case 'detalls':

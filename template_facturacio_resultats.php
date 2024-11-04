@@ -1,4 +1,15 @@
-<!DOCTYPE html>
+<?php
+/** @var array $comandes */
+/** @var array $comandes_agrupades */
+/** @var array $iva_types */
+/** @var float|int $total_totes_comandes */
+
+
+function renderComandesTable(array $comandes, array $iva_types, float $total_totes_comandes) {
+
+?>
+
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
@@ -31,8 +42,8 @@
                 "info": false,
                 "searching": false,
                 "fixedColumns": true,
-                 scrollX: true,
-                 scrollY: true,
+                scrollX: true,
+                scrollY: true,
 
             });
             $('#resultats_agrupats_per_soci').DataTable({
@@ -45,14 +56,14 @@
                 "info": false,
                 "searching": false,
                 "fixedColumns": true,
-                 scrollX: true,
-                 scrollY: true,
+                scrollX: true,
+                scrollY: true,
 
             });
         });
     </script>
 
-<style>
+    <style>
         /* Custom CSS for dashed column borders */
         table.dataTable th,
         table.dataTable td {
@@ -63,120 +74,124 @@
 
 </head>
 <body>
-    <h3>RESULTATS PER cart id</h3>
-    <table id="resultats_agrupats_per_cartid" class="display primary" cellspacing="0" width="100%">
-        <thead>
-            <tr>
-                <th style="width: 170px;"></th> <!-- necessary for buttons CSV, PDF etc -->
-                <th style="width: 200px;"></th> <!-- necessary for buttons CSV, PDF etc -->
-                <?php foreach ($factures as $factura): ?>
-                    <th></th>
-                <?php endforeach; ?>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td></td>
-                <td>Detall compra<br/>(Cart id)</td>
-                <?php foreach ($factures as $factura): ?>
-                    <td><?= $factura['cart_id'] ?></td>
-                <?php endforeach; ?>
-            </tr>
-            <tr>
-                <td>Despesa total: <?= $total_totes_comandes ?></td>
-                <td>NUM SOCI:</td>
-                <?php foreach ($factures as $factura): ?>
-                    <td><?= $factura['soci'] ?></td>
-                <?php endforeach; ?>
-            </tr>
+<h3>RESULTATS PER cart id</h3>
+<table id="resultats_agrupats_per_cartid" class="display primary" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th style="width: 170px;"></th> <!-- necessary for buttons CSV, PDF etc -->
+        <th style="width: 200px;"></th> <!-- necessary for buttons CSV, PDF etc -->
+        <?php foreach ($comandes as $comanda): ?>
+            <th></th>
+        <?php endforeach; ?>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td></td>
+        <td>Detall compra<br/>(Cart id)</td>
+        <?php foreach ($comandes as $comanda): ?>
+            <td><?= $comanda['cart_id'] ?></td>
+        <?php endforeach; ?>
+    </tr>
+    <tr>
+        <td>Despesa total: <?= $total_totes_comandes ?></td>
+        <td>NUM SOCI:</td>
+        <?php foreach ($comandes as $comanda): ?>
+            <td><?= $comanda['soci'] ?></td>
+        <?php endforeach; ?>
+    </tr>
 
 
-            <tr>
-                <td><?= count($factures) ?> comandes</td>
-                <td></td>
-                <?php foreach ($factures as $factura): ?>
-                    <td></td>
-                <?php endforeach; ?>
-            </tr>
-            <tr>
-                <td></td>
-                <td>Total:</td>
-                <?php foreach ($factures as $factura): ?>
-                    <td><?= $factura['total'] ?></td>
-                <?php endforeach; ?>
-            </tr>
-            <?php
-            $iva_keys = get_iva_types();
-            ?>
-            <?php foreach ($iva_types as $iva): ?>
-            <tr>
-                <td></td>
-                <td><?= $iva ?>%</td>
-                <?php foreach ($factures as $factura): ?>
-                    <td><?= $factura['base_iva'][$iva] ?></td>
-                <?php endforeach; ?>
-            </tr>
+    <tr>
+        <td><?= count($comandes) ?> comandes</td>
+        <td></td>
+        <?php foreach ($comandes as $comanda): ?>
+            <td></td>
+        <?php endforeach; ?>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Total:</td>
+        <?php foreach ($comandes as $comanda): ?>
+            <td><?= $comanda['total'] ?></td>
+        <?php endforeach; ?>
+    </tr>
+    <?php foreach ($iva_types as $iva): ?>
+        <tr>
+            <td></td>
+            <td><?= $iva ?>%</td>
+            <?php foreach ($comandes as $comanda): ?>
+                <td><?= $comanda['base_iva'][$iva] ?></td>
             <?php endforeach; ?>
-
+        </tr>
+    <?php endforeach; ?>
 
 
     </tbody>
 </table>
 <br>
-  <h3>RESULTATS PER SOCI</h3>
-    <table id="resultats_agrupats_per_soci" class="display primary" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-            <th style="width: 170px;"></th> <!-- necessary for buttons CSV, PDF etc -->
-            <th style="width: 200px;"></th> <!-- necessary for buttons CSV, PDF etc -->
-            <?php foreach ($factures_agrupades as $factura): ?>
-                <th></th>
-            <?php endforeach; ?>
-        </tr>
-        </thead>
-        <tbody>
-
-        <tr>
-            <td>Despesa Total: <?= $total_totes_comandes ?></td>
-            <td>NUM SOCI:</td>
-            <?php foreach ($factures_agrupades as $factura): ?>
-                <td><?= $factura['soci'] ?></td>
-            <?php endforeach; ?>
-        </tr>
+<?php } ?>
 
 
-        <tr>
-            <td><?= count($factures_agrupades) ?> socis agrupats</td>
-            <td></td>
-            <?php foreach ($factures_agrupades as $factura): ?>
-                <td></td>
-            <?php endforeach; ?>
-        </tr>
-        <tr>
-            <td></td>
-            <td>Total:</td>
-            <?php foreach ($factures_agrupades as $factura): ?>
-                <td><?= $factura['total'] ?></td>
-            <?php endforeach; ?>
-        </tr>
 
-
-        <?php
-        $iva_keys = get_iva_types();
-        ?>
-        <?php foreach ($iva_types as $iva): ?>
-            <tr>
-                <td></td>
-                <td><?= $iva ?>%</td>
-                <?php foreach ($factures_agrupades as $factura): ?>
-                    <td><?= $factura['base_iva'][$iva] ?></td>
-                <?php endforeach; ?>
-            </tr>
+<?php
+/** @var array $comandes_agrupades */
+/** @var array $iva_types */
+/** @var float|int $total_totes_comandes */
+   function renderComandesAgrupadesTable(array $comandes_agrupades, array $iva_types, float $total_totes_comandes) {
+?>
+<h3>RESULTATS PER SOCI</h3>
+<table id="resultats_agrupats_per_soci" class="display primary" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th style="width: 170px;"></th> <!-- necessary for buttons CSV, PDF etc -->
+        <th style="width: 200px;"></th> <!-- necessary for buttons CSV, PDF etc -->
+        <?php foreach ($comandes_agrupades as $comanda): ?>
+            <th></th>
         <?php endforeach; ?>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr>
+        <td>Despesa Total: <?= $total_totes_comandes ?></td>
+        <td>NUM SOCI:</td>
+        <?php foreach ($comandes_agrupades as $comanda): ?>
+            <td><?= $comanda['soci'] ?></td>
+        <?php endforeach; ?>
+    </tr>
 
 
-        </tbody>
-    </table>
+    <tr>
+        <td><?= count($comandes_agrupades) ?> socis agrupats</td>
+        <td></td>
+        <?php foreach ($comandes_agrupades as $comanda): ?>
+            <td></td>
+        <?php endforeach; ?>
+    </tr>
+    <tr>
+        <td></td>
+        <td>Total:</td>
+        <?php foreach ($comandes_agrupades as $comanda): ?>
+            <td><?= $comanda['total'] ?></td>
+        <?php endforeach; ?>
+    </tr>
+
+
+
+    <?php foreach ($iva_types as $iva): ?>
+        <tr>
+            <td></td>
+            <td><?= $iva ?>%</td>
+            <?php foreach ($comandes_agrupades as $comanda): ?>
+                <td><?= $comanda['base_iva'][$iva] ?></td>
+            <?php endforeach; ?>
+        </tr>
+    <?php endforeach; ?>
+
+
+    </tbody>
+</table>
 
 
 <!--
@@ -186,3 +201,5 @@
 </html>
 
 
+<?php
+} ?>
