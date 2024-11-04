@@ -62,17 +62,26 @@
             $endYear = $currentYear + 5; // 5 años después
         ?>
 
-        <label for="year">Selecciona l'any de facturaió</label>
-        <select name="year" id="year" class="form-select select-narrow">
+        <label for="year">Selecciona l'any de facturació</label>
+        <select name="year" id="year" style="width: 200px;" class="form-select select-narrow">
             <?php
                 for ($year = $startYear; $year <= $endYear; $year++) {
                     echo "<option value='$year' " . ($year == $currentYear ? 'selected' : '') . ">$year</option>";
                 }
             ?>
         </select>
+
+    <label for="partner_mode">Selecciona el mode de selecció del partner_id</label>
+    <select name="partner_mode" id="partner_mode" style="width: 200px;" class="form-select select-narrow">
+        <option value='nom'>nom soci</option>
+        <option value='nif'>NIF</option>
+    </select>
+
     <label for="num_propera_factura">Següent num de factura</label>
     <input type="text" name="num_propera_factura" id="num_propera_factura">
     <br>
+
+
     Exportar a
     <input type="submit" class="btn btn-success" name="accio" value="odoo">
 

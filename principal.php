@@ -13,6 +13,15 @@ function get_connexio()
     }
     return $conn;
 }
+
+ /*
+  * Obté les dades generals de les comandes DES DE L'1 DE GENER D'AQUEST ANY
+  * cartid: identificador de la copmra
+  * uf_name: nom de la cistella (no del soci)
+  * date_for_shiop: quan es va fef la compra
+  * validat: ha estat revisat per facturació?
+  * total:
+  */
 function consulta_general()
 {
     $conn = get_connexio();
@@ -91,7 +100,6 @@ function get_comanda_resumida($cart_id)
     $result['iva'] = array(); // s'aniran afegint els camps corresponents  al IVA
 
 
-
     $conn = get_connexio();
 
     $consulta_uf = "SELECT c.id, u.id, u.name as uf_id, member.name as soci, member.nif, c.date_for_shop
@@ -113,7 +121,14 @@ function get_comanda_resumida($cart_id)
     }
 
     $iva_types = get_iva_types();
-    $sql_template = "SELECT cart_id, iva_percent, SUM(ROUND((quantity * unit_price_stamp), 2)), SUM(quantity) FROM aixada_shop_item WHERE cart_id = $cart_id GROUP BY cart_id, iva_percent HAVING cart_id = $cart_id AND iva_percent = %f ORDER BY iva_percent ASC";
+    $sql_template = "SELECT cart_id, iva_percent, 
+                    SUM(ROUND((quantity * unit_price_stamp), 2)), 
+                    SUM(quantity) 
+                    FROM aixada_shop_item 
+                    WHERE cart_id = $cart_id 
+                    GROUP BY cart_id, iva_percent 
+                    HAVING cart_id = $cart_id AND iva_percent = %f 
+                    ORDER BY iva_percent ASC";
 
     foreach ($iva_types as $iva_type) {
 
@@ -124,25 +139,22 @@ function get_comanda_resumida($cart_id)
         $mysqli_result = mysqli_query($conn, $sql);
 
 
+        if ($mysqli_result && mysqli_num_rows($mysqli_result) > 0) {
 
-    if ($mysqli_result && mysqli_num_rows($mysqli_result) > 0) {
+            $row = mysqli_fetch_row($mysqli_result);
+            $result['con_iva'][$iva_type] = $row[2];
+            $result['base_iva'][$iva_type] = round($result['con_iva'][$iva_type] / (1 + $iva_type / 100), 2);
 
-        $row = mysqli_fetch_row($mysqli_result);
-        $result['con_iva'][$iva_type] = $row[2];
-        $result['base_iva'][$iva_type] = round($result['con_iva'][$iva_type]/(1 + $iva_type/100), 2);
+            $result['iva'][$iva_type] = floatval($result['con_iva'][$iva_type]) - floatval($result['base_iva'][$iva_type]);
 
-        $result['iva'][$iva_type] = floatval($result['con_iva'][$iva_type]) - floatval($result['base_iva'][$iva_type]);
-
+        }
     }
-}
 
     // Calcul del total
-    // CONGTORLAT
     //$result['total'] = ['0%'] + $result['con_iva']['4%'] + $result['con_iva']['5%'] + $result['con_iva']['10%'] + $result['con_iva']['21%'];
     $result['total'] = 0;
-    foreach ($iva_types as $iva_type){
+    foreach ($iva_types as $iva_type) {
         $result['total'] += $result['con_iva'][$iva_type];
-
     }
     mysqli_close($conn);
     return $result;
@@ -295,18 +307,7 @@ function agrupar_factures_per_soci($factures)
 
                 $factura_agrupada = $factures_agrupades[$index_soci];
 
-
-
             }
-
-
-
-
-
-
-
-
-
 
     }
 
@@ -421,7 +422,7 @@ function get_iva_types()
 }
 
 
-//////////////////////////////// Main Entrypoint
+//////////////////////////////// Main Entrypoint ////////////////////////////////
 
 $iva_types = get_iva_types();
 
@@ -433,25 +434,26 @@ if (!isset($_SESSION)) {
 }
 */
 
-
+// Comprovació que només els següents roles tenen accés a facturacií:
+// Admin
+// Caixa:
+// Comissió cobisum:
     try{
         $role = get_current_role();
-
     }catch (Exception $ex){
         header("Location: /aixada/login.php");
         exit;
     }
 $isAdmin = ($role === "Hacker Commission" || $role ===  "Checkout");
 
-
+// En cas de no ser autoritzat es fa una redirecció al login d'aixada
 if (!$isAdmin) {
-
     include_once('no_loguejat_missatge.php');
     exit; // Stops further processing
 }
 
-// Rest of the script continues here if the user is an admin
 
+// Tot correcte. Es fa un GET al apàgina principal
 
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
@@ -481,7 +483,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 foreach ($_POST as $cart_id => $value) {
                     if (is_int($cart_id)) {
                         $comanda = get_comanda_resumida($cart_id);
-
                         array_push($factures, $comanda); // Append $comanda to $factures
                         $total_totes_comandes += $comanda['total'];
                     }
@@ -498,19 +499,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo('couldn\'t find $_POST[\'cart_id\']');
                 } else {
                     $cart_id = $_POST['cart_id'];
-                    //ºecho 'detalls';
                     $results_comanda_sencera = get_comanda_sencera($cart_id);
                     $results_comanda_resumida = get_comanda_resumida($cart_id);
+
                     require('template_detalls_resultats.php');
                 }
                 break;
             case 'odoo':
 
-                print_r($_POST);
+                //print_r($_POST);
                 $message = comprovar_ultim_numero_factura();
                 if ($message != '') {
 
-// Create the div with the message and the back button
+                    // Create the div with the message and the back button
                     echo '<div>';
                     echo '<p>' . htmlspecialchars($message) . '</p>'; // Display the message
                     echo '<button onclick="window.history.back();">Tornar</button>'; // Add a 'Go Back' button

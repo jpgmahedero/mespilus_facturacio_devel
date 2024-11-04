@@ -71,10 +71,11 @@
     usort($factures, function ($a, $b) {
         return $a['cart_id'] - $b['cart_id'];
     });
-    //print_r($factures);
+    //print_r($factures[0]);
     ?>
 
     <?php foreach ($factures as $results_comanda_resumida): ?>
+
         <?php $first_line = true; ?>
         <?php foreach ($iva_types as $iva) : ?>
             <?php
@@ -85,7 +86,18 @@
             <tr>
                 <td><?= $first_line ? htmlspecialchars($results_comanda_resumida['cart_id']) : ''; ?></td>
                 <td>INV/ <?= $_POST['year']?>/<?= $first_line ? $num_propera_factura : ''; ?></td>
-                <td><?= $first_line ? strtoupper(htmlspecialchars($results_comanda_resumida['nif'])) : ''; ?></td>
+                <?php
+                if ($first_line) {
+                    if (isset($_POST['partner_mode']) && strcmp($_POST['partner_mode'], 'nif') == 0) {
+                        echo '<td>' . strtoupper(htmlspecialchars($results_comanda_resumida['nif'])) . '</td>';
+                    } else {
+                        echo '<td>' . strtoupper(htmlspecialchars($results_comanda_resumida['member'])) . '</td>';
+                    }
+                } else {
+                    echo '<td></td>';
+                }
+                ?>
+
                 <td><?= $first_line ? htmlspecialchars($results_comanda_resumida['date_for_shop']) : ''; ?></td>
                 <td>700000 Ventas de mercaderías en España</td>
                 <td>1</td>
