@@ -360,16 +360,19 @@ function generar_nou_numero_factura($num)
     return $num++;
 }
 
-/////////////////////////////////////////////////
 
-function load_session()
+
+
+
+
+function get_current_role()
 {
-    if (!isset($_SESSION)) {
-        session_start();
-    }
+    return get_session_value('current_role');
 }
 
-
+/**
+ * SESSION MANAGEMENT
+ */
 function validate_session()
 {
     load_session();
@@ -397,35 +400,6 @@ function validate_session()
     }
 }
 
-/**
- * Logout Aixada session destroying php session.
- */
-/*
-function logout_session() {
-    load_session();
-    session_regenerate_id(true);
-    session_unset();
-    session_destroy();
-}
-*/
-
-/**
- * Save Aixada session (only used in this general.php)
- */
-function save_session() {
-    $_SESSION['userdata']['t_saved'] = time();
-    session_commit();
-}
-function get_current_role()
-{
-    return get_session_value('current_role');
-}
-
-function get_session_value($name)
-{
-    validate_session();
-    return $_SESSION['userdata'][$name];
-}
 
 
 function get_iva_types()
@@ -444,6 +418,43 @@ function get_iva_types()
     }
     sort($iva_types);
     return $iva_types;
+}
+
+
+/**
+ * Logout Aixada session destroying php session.
+ */
+/*
+function logout_session() {
+    load_session();
+    session_regenerate_id(true);
+    session_unset();
+    session_destroy();
+}
+*/
+/**
+ * Load Aixada session (only used in this general.php)
+ */
+
+function load_session()
+{
+    if (!isset($_SESSION)) {
+        session_start();
+    }
+}
+/**
+ * Save Aixada session (only used in this general.php)
+ */
+function save_session() {
+    $_SESSION['userdata']['t_saved'] = time();
+    session_commit();
+}
+
+
+function get_session_value($name)
+{
+    validate_session();
+    return $_SESSION['userdata'][$name];
 }
 
 
@@ -482,6 +493,8 @@ if (!$isAdmin) {
 
 
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
+    print_r('fooo');
+
     // Query  DB
     $results = consulta_general();
 
